@@ -30,11 +30,24 @@ axiosClient.interceptors.response.use(
         return response;
     },
     (error) => {
-        // Nếu lỗi 401 hoặc 403 (Token hết hạn/Không có quyền) thì đá ra trang Login
-        if (error.response && (error.response.status === 401 || error.response.status === 403)) {
-            localStorage.removeItem('token');
-            window.location.href = '/login';
+        if (error.response) {
+            const status = error.response.status;
+
+            // CHUẨN DEV: CHỈ đá ra trang Login nếu lỗi 401 (Hết hạn Token hoặc chưa đăng nhập)
+            if (status === 401) {
+                console.error("Lỗi 401: Token không hợp lệ hoặc đã hết hạn.");
+                // Dọn dẹp sạch sẽ toàn bộ thông tin phiên cũ
+                localStorage.removeItem('token');
+                localStorage.removeItem('role');
+                localStorage.removeItem('email');
+                window.location.href = '/login';
+            }
+            // Nếu lỗi 403 (Cấm truy cập/Chưa cấu hình API), chỉ in ra Console chứ KHÔNG đá văng
+            else if (status === 403) {
+                console.error("Lỗi 403: Không có quyền truy cập. Vui lòng kiểm tra lại cấu hình @PreAuthorize ở Backend.");
+            }
         }
+
         return Promise.reject(error.response?.data || error.message);
     }
 );
