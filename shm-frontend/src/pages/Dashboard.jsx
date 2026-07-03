@@ -1,46 +1,7 @@
-import { useState, useEffect } from 'react';
-import axiosClient from '../api/axiosClient';
+import React from 'react';
 
 export default function Dashboard() {
     const role = localStorage.getItem('role') || 'Guest';
-
-    // Khởi tạo state chứa dữ liệu thống kê
-    const [stats, setStats] = useState({
-        activeEvents: 0,
-        totalTeams: 0,
-        pendingSubmissions: 0
-    });
-    const [loading, setLoading] = useState(true);
-    const [error, setError] = useState(null);
-
-    useEffect(() => {
-        fetchDashboardStats();
-    }, []);
-
-    const fetchDashboardStats = async () => {
-        try {
-            setLoading(true);
-            setError(null);
-
-            // Gọi API lấy dữ liệu thống kê.
-            // Lưu ý: Backend cần có endpoint GET /api/stats
-            const response = await axiosClient.get('/stats');
-
-            // Cập nhật state nếu có dữ liệu trả về từ Spring Boot
-            if (response.result) {
-                setStats({
-                    activeEvents: response.result.activeEvents || 0,
-                    totalTeams: response.result.totalTeams || 0,
-                    pendingSubmissions: response.result.pendingSubmissions || 0
-                });
-            }
-        } catch (err) {
-            setError('Không thể tải dữ liệu thống kê. Đang chờ API từ hệ thống.');
-            console.error('Lỗi khi tải Dashboard:', err);
-        } finally {
-            setLoading(false);
-        }
-    };
 
     return (
         <div className="min-h-screen bg-[#F1F5F9] px-4 py-8 sm:px-6 lg:px-8 antialiased selection:bg-[#1E5BB8]/10 selection:text-[#1E5BB8]">
@@ -48,33 +9,17 @@ export default function Dashboard() {
             <div className="max-w-[1100px] mx-auto bg-white rounded-[32px] shadow-xl border border-slate-100 p-6 sm:p-10 md:p-12 transition-all duration-500 ease-out transform opacity-0 translate-y-4 animate-[fadeInUp_0.6s_ease-out_forwards]">
 
                 {/* Phần Header Tiêu đề */}
-                <div className="mb-8 border-b border-slate-100 pb-6 flex justify-between items-start">
-                    <div>
-                        <h1 className="text-3xl font-bold text-[#1E293B] tracking-tight mb-2">
-                            Chào mừng đến với Hệ thống SEAL Hackathon
-                        </h1>
-                        <p className="text-[13px] text-slate-600 leading-relaxed flex items-center gap-2">
-                            <span>Bạn đang đăng nhập với vai trò:</span>
-                            <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-bold bg-[#1E5BB8]/10 text-[#1E5BB8] uppercase tracking-wide">
-                                {role || 'Khách'}
-                            </span>
-                        </p>
-                    </div>
-
-                    <button
-                        onClick={fetchDashboardStats}
-                        disabled={loading}
-                        className="px-4 py-2 bg-gray-100 border border-gray-300 rounded-lg text-sm font-medium hover:bg-gray-200 text-gray-700 transition-colors disabled:opacity-50"
-                    >
-                        🔄 Làm mới
-                    </button>
+                <div className="mb-8 border-b border-slate-100 pb-6">
+                    <h1 className="text-3xl font-bold text-[#1E293B] tracking-tight mb-2">
+                        Chào mừng đến với Hệ thống SEAL Hackathon
+                    </h1>
+                    <p className="text-[13px] text-slate-600 leading-relaxed flex items-center gap-2">
+                        <span>Bạn đang đăng nhập với vai trò:</span>
+                        <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-bold bg-[#1E5BB8]/10 text-[#1E5BB8] uppercase tracking-wide">
+                            {role}
+                        </span>
+                    </p>
                 </div>
-
-                {error && (
-                    <div className="mb-6 p-4 text-sm text-red-600 bg-red-50 rounded-lg border border-red-100">
-                        {error}
-                    </div>
-                )}
 
                 {/* Grid 3 cột cho các thẻ thống kê phẳng mượt mà */}
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
@@ -91,9 +36,7 @@ export default function Dashboard() {
                                 </svg>
                             </span>
                         </div>
-                        <p className="text-4xl font-extrabold text-[#1E293B] mt-4 tracking-tight">
-                            {loading ? <span className="animate-pulse">...</span> : stats.activeEvents}
-                        </p>
+                        <p className="text-4xl font-extrabold text-[#1E293B] mt-4 tracking-tight">1</p>
                     </div>
 
                     {/* Thẻ 2: Đội thi */}
@@ -108,9 +51,7 @@ export default function Dashboard() {
                                 </svg>
                             </span>
                         </div>
-                        <p className="text-4xl font-extrabold text-[#1E293B] mt-4 tracking-tight">
-                            {loading ? <span className="animate-pulse">...</span> : stats.totalTeams}
-                        </p>
+                        <p className="text-4xl font-extrabold text-[#1E293B] mt-4 tracking-tight">24</p>
                     </div>
 
                     {/* Thẻ 3: Bài thi */}
@@ -125,9 +66,7 @@ export default function Dashboard() {
                                 </svg>
                             </span>
                         </div>
-                        <p className="text-4xl font-extrabold text-[#1E293B] mt-4 tracking-tight">
-                            {loading ? <span className="animate-pulse">...</span> : stats.pendingSubmissions}
-                        </p>
+                        <p className="text-4xl font-extrabold text-[#1E293B] mt-4 tracking-tight">12</p>
                     </div>
 
                 </div>
